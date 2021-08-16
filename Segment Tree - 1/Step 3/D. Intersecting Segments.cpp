@@ -42,9 +42,9 @@ public:
         tree[index] = tree[2 * index + 1] + tree[2 * index + 2];
     }
 
-    void update(int pos)
+    void update(int pos, int val)
     {
-        updateHelper(pos, 1, 0, right, 0);
+        updateHelper(pos, val, 0, right, 0);
     }
 
     long long queryHelper(int l, int r, int index, int le, int re)
@@ -84,11 +84,13 @@ int main()
         if (m[arr[i]] == 0)
         {
             m[arr[i]] = i + 1;
+            tree.update(i, 1);
         }
         else
         {
-            ans[arr[i]] = tree.query(m[arr[i]] - 1, i);
-            tree.update(m[arr[i]] - 1);
+            ans[arr[i]] = tree.query(m[arr[i]] - 1, i) - 1;
+            tree.update(m[arr[i]] - 1, -1);
+            tree.update(i, 1);
         }
     }
     for (int i = 1; i <= n; i++)
