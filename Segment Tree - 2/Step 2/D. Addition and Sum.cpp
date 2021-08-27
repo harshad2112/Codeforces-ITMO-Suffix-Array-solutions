@@ -23,26 +23,25 @@ public:
         int mid = (l + r) / 2;
         buildTree(arr, 2 * index + 1, l, mid);
         buildTree(arr, 2 * index + 2, mid + 1, r);
-        Tree[index] = Tree[2 * index + 1] & Tree[2 * index + 2];
+        Tree[index] = Tree[2 * index + 1] + Tree[2 * index + 2];
     }
 
     void UpdateHelper(int l, int r, int val, int index, int le, int re)
     {
-
-        Tree[index] |= lazy[index];
+        Tree[index] += lazy[index] * (re - le + 1);
         if (le != re)
         {
-            lazy[2 * index + 1] |= lazy[index];
-            lazy[2 * index + 2] |= lazy[index];
+            lazy[2 * index + 1] += lazy[index];
+            lazy[2 * index + 2] += lazy[index];
         }
         lazy[index] = 0;
         if (l <= le and r >= re)
         {
-            Tree[index] |= val;
+            Tree[index] += 1LL * val * (re - le + 1);
             if (le != re)
             {
-                lazy[2 * index + 1] |= val;
-                lazy[2 * index + 2] |= val;
+                lazy[2 * index + 1] += val;
+                lazy[2 * index + 2] += val;
             }
             return;
         }
@@ -51,7 +50,7 @@ public:
         int mid = (le + re) / 2;
         UpdateHelper(l, r, val, 2 * index + 1, le, mid);
         UpdateHelper(l, r, val, 2 * index + 2, mid + 1, re);
-        Tree[index] = Tree[2 * index + 1] & Tree[2 * index + 2];
+        Tree[index] = Tree[2 * index + 1] + Tree[2 * index + 2];
     }
 
     void update(int l, int r, int val)
@@ -61,11 +60,11 @@ public:
 
     long long queryHelper(int l, int r, int index, int le, int re)
     {
-        Tree[index] = Tree[index] | lazy[index];
+        Tree[index] += lazy[index] * (re - le + 1);
         if (le != re)
         {
-            lazy[2 * index + 1] |= lazy[index];
-            lazy[2 * index + 2] |= lazy[index];
+            lazy[2 * index + 1] += lazy[index];
+            lazy[2 * index + 2] += lazy[index];
         }
         lazy[index] = 0;
         if (l <= le and re <= r)
@@ -73,9 +72,9 @@ public:
             return Tree[index];
         }
         if (l > re or r < le)
-            return ~(0);
+            return 0;
         int mid = (le + re) / 2;
-        return (queryHelper(l, r, 2 * index + 1, le, mid) & queryHelper(l, r, 2 * index + 2, mid + 1, re));
+        return (queryHelper(l, r, 2 * index + 1, le, mid) + queryHelper(l, r, 2 * index + 2, mid + 1, re));
     }
 
     long long query(int l, int r)
